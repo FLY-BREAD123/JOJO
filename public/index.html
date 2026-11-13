@@ -577,6 +577,52 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
 @keyframes notifOut { to { opacity: 0; transform: translateX(16px); } }
 .sound-btn.off { color: var(--faint); }
 
+/* 직급표: 구분마다 한 장, 왼쪽은 직급, 오른쪽은 사람 */
+.ro-bar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
+.ro-sum { margin: 0; font-size: 14px; color: var(--graphite); }
+.ro-sum b { margin-right: 2px; font: 600 30px/1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.ro-sum .muted { margin-left: 8px; }
+.ro-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ro-actions .ic { width: 15px; height: 15px; }
+.ro-hint { margin: 10px 0 0; font-size: 13px; color: var(--mute); }
+.view > .ro-hint { margin-top: 10px; }
+.tier { padding: 0; overflow: hidden; }
+.tier-head { display: flex; align-items: baseline; gap: 10px; padding: 16px 24px 14px; border-bottom: 1px solid var(--line-soft); }
+.tier-head h3 { margin: 0; font: 600 19px/1.3 var(--serif); color: var(--ink); }
+.tier-n { font-size: 13px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.tier-head .ro-tools { align-self: center; }
+.ro-titles { list-style: none; margin: 0; padding: 4px 0; }
+.ro-title { display: grid; grid-template-columns: minmax(120px, 176px) 1fr auto; align-items: start; gap: 14px; padding: 10px 24px; }
+.ro-title + .ro-title { border-top: 1px solid var(--line-soft); }
+.ro-name { display: flex; align-items: center; gap: 8px; min-height: 30px; font-weight: 650; font-size: 14.5px; color: var(--ink); overflow-wrap: anywhere; }
+.ro-icon { width: 18px; flex: none; font-size: 15px; line-height: 1; text-align: center; }
+.ro-name .none { color: var(--faint); font-weight: 500; }
+.ro-people { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.person { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: 500 13.5px/1 var(--sans); color: var(--ink); white-space: nowrap; }
+.person .gid { font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.person .dot { width: 7px; height: 7px; }
+button.person { cursor: pointer; transition: border-color .15s; }
+button.person:hover { border-color: var(--ink); }
+.person.add { border-style: dashed; color: var(--graphite); }
+.person.add .ic { width: 14px; height: 14px; }
+.ro-vacant { display: inline-flex; align-items: center; min-height: 30px; font-size: 13px; color: var(--faint); }
+.ro-tools { margin-left: auto; display: flex; gap: 2px; }
+.icon-btn.sm { width: 30px; height: 30px; }
+.icon-btn.sm .ic { width: 16px; height: 16px; }
+.icon-btn:disabled { opacity: .3; cursor: default; background: none; }
+.tier-empty { padding: 14px 24px; margin: 0; }
+.ro-more { padding: 4px 24px 16px; }
+.ro-more .ic { width: 15px; height: 15px; }
+.ro-more.solo { padding: 0; }
+.ro-foot { margin-top: 14px; }
+.ro-icons .chip-radio span { min-width: 44px; justify-content: center; font-size: 15px; }
+.form-actions .ro-del { margin-right: auto; }
+.form-actions .ro-del .ic { width: 15px; height: 15px; }
+.ro-import-note { margin: 0 0 14px; }
+.ro-import-text { height: auto; min-height: 220px; padding: 10px 12px; font: 13px/1.6 var(--sans); resize: vertical; }
+.ro-preview { margin: -4px 0 14px; padding: 12px 14px; border-radius: var(--r-ctl); background: var(--page); font-size: 13.5px; color: var(--graphite); }
+.ro-preview b { color: var(--ink); }
+
 /* 개발자 표시 */
 .dev-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: var(--ink); color: #fff; font: 700 12px/1 var(--sans); letter-spacing: .02em; }
 .rail-me .rank b.dev { padding: 1px 8px; border-radius: 999px; background: var(--ink); color: #fff; font: 700 11.5px/1.6 var(--sans); }
@@ -604,6 +650,14 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
 /* ================================================================
    좁은 화면
    ================================================================ */
+@media (max-width: 720px) {
+  .tier-head { padding: 14px 16px 12px; }
+  .ro-title { grid-template-columns: 1fr auto; gap: 8px 10px; padding: 10px 16px; }
+  .ro-people { grid-column: 1 / -1; grid-row: 2; }
+  .ro-title .ro-tools { grid-column: 2; grid-row: 1; }
+  .ro-more { padding: 4px 16px 14px; }
+  .tier-empty { padding: 12px 16px; }
+}
 @media (max-width: 1180px) {
   .duty-hero { grid-template-columns: auto minmax(0, 1fr); }
   .week-chart { grid-column: 1 / -1; border-left: 0; padding-left: 0; border-top: 1px solid var(--line-soft); padding-top: 20px; }
@@ -619,7 +673,8 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
   .rail { position: fixed; top: auto; bottom: 0; left: 0; right: 0; height: auto; z-index: 40; flex-direction: row; padding: 4px 6px calc(4px + env(safe-area-inset-bottom)); border-right: 0; border-top: 1px solid var(--line); }
   .brand, .rail-me { display: none; }
   .nav { flex-direction: row; justify-content: space-around; width: 100%; gap: 0; }
-  .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 7px 2px 6px; font-size: 11px; font-weight: 500; }
+  .nav a { flex: 1; flex-direction: column; gap: 3px; padding: 7px 2px 6px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .nav-wide { display: none; }
   .nav a.on { background: none; }
   .nav a.on::before { left: 30%; right: 30%; top: -5px; bottom: auto; width: auto; height: 2px; }
   .nav .badge { position: absolute; top: 2px; left: 54%; margin: 0; min-width: 16px; height: 16px; font-size: 10px; padding: 0 4px; }
@@ -786,6 +841,11 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4"/></symbol>
     <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4.5v11M7 11l5 5 5-5"/><path d="M5 19.5h14"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
+    <symbol id="i-roster" viewBox="0 0 24 24"><path d="M7.6 8.6 8.8 4.8l3.2 2.6 3.2-2.6 1.2 3.8z"/><circle cx="12" cy="13.2" r="2.7"/><path d="M6.4 20.2c.8-2.7 3-4.3 5.6-4.3s4.8 1.6 5.6 4.3"/></symbol>
+    <symbol id="i-dn" viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5 12 18l5.5-5.5"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4.5 19.5l1-4.2L15.6 5.2a1.7 1.7 0 0 1 2.4 0l.8.8a1.7 1.7 0 0 1 0 2.4L8.7 18.5z"/><path d="M13.6 7.2l3.2 3.2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10.2 11v5.5M13.8 11v5.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V6M6.5 11.5 12 6l5.5 5.5"/></symbol>
     <!-- 보고 유형 -->
     <symbol id="g-pvp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/></symbol>
@@ -856,7 +916,8 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     <nav class="nav" aria-label="메뉴">
       <a href="#home" data-nav="home"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg><span>본부</span></a>
       <a href="#duty" data-nav="duty"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg><span>출퇴근</span></a>
-      <a href="#reports" data-nav="reports"><svg class="ic" aria-hidden="true"><use href="#g-war"/></svg><span>전쟁 보고서</span></a>
+      <a href="#reports" data-nav="reports"><svg class="ic" aria-hidden="true"><use href="#g-war"/></svg><span>전쟁<span class="nav-wide"> 보고서</span></span></a>
+      <a href="#roster" data-nav="roster"><svg class="ic" aria-hidden="true"><use href="#i-roster"/></svg><span>직급표</span></a>
       <a href="#calc" data-nav="calc"><svg class="ic" aria-hidden="true"><use href="#i-calc"/></svg><span>계산기</span></a>
       <a href="#treasury" data-nav="treasury"><svg class="ic" aria-hidden="true"><use href="#i-coins"/></svg><span>조직 자금</span></a>
       <a href="#logs" data-nav="logs"><svg class="ic" aria-hidden="true"><use href="#i-log"/></svg><span>로그</span></a>
@@ -899,7 +960,7 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
   const KIND_GLYPH = { ground: 'war', vehicle: 'car', pvp: 'pvp' };
   const RESULTS = { win: '승리', lose: '패배', success: '성공', fail: '실패', ongoing: '진행 중' };
   const LOG_FILTERS = [['', '전체'], ['duty', '출퇴근'], ['report', '전쟁·PVP'], ['ledger', '자금'], ['people', '인사']];
-  const LOG_LABEL = { duty: '출퇴근', report: '전쟁·PVP', ledger: '자금', join: '인사', rank: '인사', warn: '경고', kick: '퇴장', notice: '공지' };
+  const LOG_LABEL = { duty: '출퇴근', report: '전쟁·PVP', ledger: '자금', join: '인사', rank: '인사', warn: '경고', kick: '퇴장', notice: '공지', roster: '직급표' };
   const SOUND_KEY = 'jeokya.sound';
   const WD = ['일', '월', '화', '수', '목', '금', '토'];
   const KST = 9 * 3600000;
@@ -909,6 +970,7 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     token: null, me: null, settings: null, route: '', seq: 0, skew: 0,
     open: new Set(), dutyTab: 'mine', repType: '', mem: {}, modal: null, expiring: false, enterTimer: 0,
     calc: {}, logGroup: '', logLimit: 80, logItems: [], logMore: false, logTotal: 0, reportMembers: null,
+    roster: null, rosterEdit: false, rosterNames: null,
   };
 
   const $ = (s, r = document) => r.querySelector(s);
@@ -1320,7 +1382,7 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
   function stat(value, kind, label) {
     return '<div class="stat"><div class="stat-num" data-count="' + value + '" data-kind="' + kind + '">' + fmtKind(value, kind) + '</div><div class="stat-label">' + label + '</div></div>';
   }
-  const FEED_ICON = { duty: 'i-clock', report: 'i-doc', ledger: 'i-coins', notice: 'i-pin', rank: 'i-up', join: 'i-user', warn: 'i-alert', kick: 'i-out' };
+  const FEED_ICON = { duty: 'i-clock', report: 'i-doc', ledger: 'i-coins', notice: 'i-pin', rank: 'i-up', join: 'i-user', warn: 'i-alert', kick: 'i-out', roster: 'i-roster' };
 
   /* ================================================================
      화면: 본부
@@ -1660,6 +1722,145 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     const total = lines.reduce((t, l) => t + l.sum, 0);
     return '[적야 총기 견적]\n' + lines.map((l) => gunText(l.g, l.q) + ': ' + won(l.sum)).join('\n') + '\n합계: ' + won(total) + ' (' + comma(total) + '원)';
   }
+  /* ================================================================
+     화면: 직급표
+     ================================================================ */
+  const ROSTER_ICONS = ['👑', '⚜️', '💎', '⭐', '🔱', '🛡️', '🎖️', '🔥'];
+  const pLabel = (p) => p.name + (p.gid ? '(' + p.gid + ')' : '');
+  function personChip(p, edit) {
+    const inner = (p.uid ? '<span class="dot' + (p.onDuty ? ' on' : '') + '" title="' + (p.onDuty ? '근무 중' : '근무 아님') + '"></span>' : '') +
+      '<span class="pn">' + esc(p.name) + '</span>' + (p.gid ? '<span class="gid">' + esc(p.gid) + '</span>' : '');
+    return edit
+      ? '<button type="button" class="person" data-act="ro-person" data-id="' + p.id + '" aria-label="' + esc(pLabel(p)) + ' 고치기">' + inner + '</button>'
+      : '<span class="person">' + inner + '</span>';
+  }
+  function roTool(act, id, icon, label, extra) {
+    return '<button type="button" class="icon-btn sm" data-act="' + act + '" data-id="' + id + '"' + (extra || '') + ' aria-label="' + esc(label) + '" title="' + esc(label) + '">' + ic(icon) + '</button>';
+  }
+  function renderRoster(d) {
+    const R = d.roster;
+    S.roster = R;
+    const edit = R.canEdit && S.rosterEdit;
+    const bar = '<section class="ro-bar">' +
+      '<p class="ro-sum"><b>' + R.total + '</b>명 <span class="muted">구분 ' + R.tiers.length + '개, 직급 ' + R.titleCount + '개</span></p>' +
+      '<div class="ro-actions">' +
+        '<button type="button" class="btn-ghost sm" data-act="ro-copy">' + ic('i-copy') + '디스코드로 복사</button>' +
+        (edit ? '<button type="button" class="btn-ghost sm" data-act="ro-import">' + ic('i-down') + '디스코드 글 불러오기</button>' : '') +
+        (R.canEdit ? '<button type="button" class="btn sm" data-act="ro-edit" aria-pressed="' + !!edit + '">' + (edit ? '편집 끝내기' : ic('i-pen') + '편집') + '</button>' : '') +
+      '</div></section>' +
+      (edit ? '<p class="ro-hint">사람을 누르면 이름·고유번호를 고치거나 다른 직급으로 옮기거나 뺄 수 있어요.</p>' : '');
+    const last = R.tiers.length - 1;
+    const tiers = R.tiers.map((t, ti) => {
+      const tools = edit ? '<span class="ro-tools">' +
+        roTool('ro-tier-move', t.id, 'i-up', t.name + ' 위로', ' data-d="-1"' + (ti === 0 ? ' disabled' : '')) +
+        roTool('ro-tier-move', t.id, 'i-dn', t.name + ' 아래로', ' data-d="1"' + (ti === last ? ' disabled' : '')) +
+        roTool('ro-tier-edit', t.id, 'i-pen', t.name + ' 이름 바꾸기') +
+        roTool('ro-tier-del', t.id, 'i-trash', t.name + ' 삭제') + '</span>' : '';
+      const tl = t.titles.length - 1;
+      const rows = t.titles.map((x, xi) =>
+        '<li class="ro-title">' +
+          '<div class="ro-name">' + (x.icon ? '<span class="ro-icon" aria-hidden="true">' + esc(x.icon) + '</span>' : '') +
+            (x.name ? '<span>' + esc(x.name) + '</span>' : '<span class="none">이름 없음</span>') + '</div>' +
+          '<div class="ro-people">' + x.people.map((p) => personChip(p, edit)).join('') +
+            (edit ? '<button type="button" class="person add" data-act="ro-person-add" data-id="' + x.id + '">' + ic('i-plus') + '추가</button>'
+              : (x.people.length ? '' : '<span class="ro-vacant">비어 있음</span>')) + '</div>' +
+          (edit ? '<span class="ro-tools">' +
+            roTool('ro-title-move', x.id, 'i-up', (x.name || '직급') + ' 위로', ' data-d="-1"' + (xi === 0 ? ' disabled' : '')) +
+            roTool('ro-title-move', x.id, 'i-dn', (x.name || '직급') + ' 아래로', ' data-d="1"' + (xi === tl ? ' disabled' : '')) +
+            roTool('ro-title-edit', x.id, 'i-pen', (x.name || '직급') + ' 고치기') + '</span>' : '') +
+        '</li>').join('');
+      return '<section class="sheet tier">' +
+        '<header class="tier-head"><h3>' + esc(t.name) + '</h3><span class="tier-n">' + t.count + '명</span>' + tools + '</header>' +
+        (rows ? '<ul class="ro-titles">' + rows + '</ul>' : '<p class="empty tier-empty">아직 직급이 없습니다.</p>') +
+        (edit ? '<div class="ro-more"><button type="button" class="btn-ghost sm" data-act="ro-title-add" data-id="' + t.id + '">' + ic('i-plus') + '직급 추가</button></div>' : '') +
+        '</section>';
+    }).join('');
+    const empty = !R.tiers.length ? '<section class="sheet"><p class="empty">직급표가 비어 있습니다.' + (R.canEdit ? ' 편집을 눌러 구분을 만들거나 디스코드 글을 불러오세요.' : '') + '</p></section>' : '';
+    const foot = (edit ? '<div class="ro-more solo"><button type="button" class="btn-ghost" data-act="ro-tier-add">' + ic('i-plus') + '구분 추가</button></div>' : '') +
+      (R.updatedAt ? '<p class="muted small ro-foot">마지막 수정 ' + fDate(R.updatedAt) + (R.byName ? ', ' + esc(R.byName) : '') + '</p>' : '');
+    return bar + empty + tiers + foot;
+  }
+  function paintRoster(R) {
+    if (S.route !== 'roster') return;
+    const y = window.scrollY;
+    $('#view').innerHTML = renderRoster({ roster: R });
+    window.scrollTo(0, y);
+  }
+  async function rosterOp(body, okMsg) {
+    const d = await api('/roster', { method: 'POST', body });
+    if (d.roster) { S.roster = d.roster; paintRoster(d.roster); }
+    if (okMsg) toast(okMsg);
+    return d;
+  }
+  const roTier = (id) => S.roster.tiers.find((t) => t.id === Number(id));
+  function roTitle(id) {
+    for (const t of S.roster.tiers) for (const x of t.titles) if (x.id === Number(id)) return { tier: t, title: x };
+    return null;
+  }
+  function roPerson(id) {
+    for (const t of S.roster.tiers) for (const x of t.titles) for (const p of x.people) if (p.id === Number(id)) return { tier: t, title: x, person: p };
+    return null;
+  }
+  function roTitleOptions(sel) {
+    return S.roster.tiers.map((t) => '<optgroup label="' + esc(t.name) + '">' + t.titles.map((x) =>
+      '<option value="' + x.id + '"' + (x.id === sel ? ' selected' : '') + '>' + esc([x.icon, x.name || '이름 없음'].filter(Boolean).join(' ')) + '</option>').join('') + '</optgroup>').join('');
+  }
+  const roActions = (ok, del) => '<p class="form-err" role="alert"></p><div class="form-actions">' + (del || '') +
+    '<button type="button" class="btn-ghost" data-act="modal-close">취소</button><button class="btn">' + ok + '</button></div>';
+  function openTierForm(t) {
+    modal({
+      title: t ? '구분 이름 바꾸기' : '구분 추가',
+      body: '<form data-form="ro-tier" novalidate>' + (t ? '<input type="hidden" name="id" value="' + t.id + '">' : '') +
+        '<div class="f"><label for="ro-tier-name">구분 이름</label><input id="ro-tier-name" name="name" class="input" maxlength="12" autocomplete="off" value="' + esc(t ? t.name : '') + '" placeholder="예: 특수직"></div>' +
+        roActions(t ? '바꾸기' : '추가') + '</form>',
+    });
+  }
+  function openTitleForm(tier, x) {
+    const icons = ROSTER_ICONS.slice();
+    if (x && x.icon && !icons.includes(x.icon)) icons.unshift(x.icon);
+    const cur = x ? x.icon : '👑';
+    modal({
+      title: x ? '직급 고치기' : tier.name + '에 직급 추가',
+      body: '<form data-form="ro-title" novalidate>' +
+        (x ? '<input type="hidden" name="id" value="' + x.id + '">' : '<input type="hidden" name="tierId" value="' + tier.id + '">') +
+        '<fieldset class="f"><legend>아이콘</legend><div class="seg-chips ro-icons">' +
+          icons.concat(['']).map((v) => '<label class="chip-radio"><input type="radio" name="icon" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '><span>' + (v ? esc(v) : '없음') + '</span></label>').join('') +
+        '</div></fieldset>' +
+        '<div class="f"><label for="ro-title-name">직급 이름</label><input id="ro-title-name" name="name" class="input" maxlength="16" autocomplete="off" value="' + esc(x ? x.name : '') + '" placeholder="예: 행동대장"></div>' +
+        (x ? '<div class="f"><label for="ro-title-tier">구분</label><select id="ro-title-tier" name="tierId" class="select">' +
+          S.roster.tiers.map((t) => '<option value="' + t.id + '"' + (t.id === tier.id ? ' selected' : '') + '>' + esc(t.name) + '</option>').join('') + '</select></div>' : '') +
+        roActions(x ? '저장' : '추가', x ? '<button type="button" class="btn-ghost danger ro-del" data-act="ro-title-del" data-id="' + x.id + '">' + ic('i-trash') + '직급 삭제</button>' : '') +
+        '</form>',
+    });
+  }
+  async function openPersonForm(title, p) {
+    if (!S.rosterNames) {
+      try { const d = await api('/members'); S.rosterNames = d.members.map((m) => m.name); } catch (_) { S.rosterNames = []; }
+    }
+    modal({
+      title: p ? pLabel(p) + ' 고치기' : (title.name || '직급') + '에 사람 추가',
+      body: '<form data-form="ro-person" novalidate>' + (p ? '<input type="hidden" name="id" value="' + p.id + '">' : '') +
+        '<div class="f"><label for="ro-p-name">이름</label><input id="ro-p-name" name="name" class="input" maxlength="20" autocomplete="off" list="ro-names" value="' + esc(p ? p.name : '') + '" placeholder="게임 이름">' +
+          '<datalist id="ro-names">' + S.rosterNames.map((n) => '<option value="' + esc(n) + '">').join('') + '</datalist></div>' +
+        '<div class="f"><label for="ro-p-gid">고유번호<span class="opt">선택</span></label><input id="ro-p-gid" name="gid" class="input gid-input" inputmode="numeric" maxlength="10" autocomplete="off" value="' + esc(p ? p.gid : '') + '" placeholder="예: 655"></div>' +
+        '<div class="f"><label for="ro-p-title">직급</label><select id="ro-p-title" name="titleId" class="select">' + roTitleOptions(title.id) + '</select></div>' +
+        roActions(p ? '저장' : '추가', p ? '<button type="button" class="btn-ghost danger ro-del" data-act="ro-person-del" data-id="' + p.id + '">' + ic('i-trash') + '빼기</button>' : '') +
+        '</form>',
+    });
+  }
+  function openRosterImport() {
+    modal({
+      title: '디스코드 글 불러오기',
+      wide: true,
+      body: '<form data-form="ro-import" novalidate>' +
+        '<p class="muted small ro-import-note">디스코드에 올린 직급표 글을 그대로 붙여넣으세요. "── 최고위직 ──" 같은 줄은 구분, "두목 : 이름(번호)" 같은 줄은 직급으로 읽습니다.</p>' +
+        '<div class="f"><label for="ro-import-text">직급표 글</label><textarea id="ro-import-text" name="text" class="input ro-import-text" rows="12" spellcheck="false" placeholder="👑 ── 최고위직 ── 👑&#10;👑 두목 : 이름(번호)&#10;👑 부두목 : 이름(번호) , 이름(번호)"></textarea></div>' +
+        '<p class="ro-preview" hidden></p>' +
+        '<p class="form-err" role="alert"></p><div class="form-actions"><button type="button" class="btn-ghost" data-act="modal-close">취소</button><button class="btn" data-step="check">확인</button></div>' +
+        '</form>',
+    });
+  }
+
   async function copyText(text) {
     try { await navigator.clipboard.writeText(text); return true; } catch (_) { /* 아래 방법으로 */ }
     const ta = document.createElement('textarea');
@@ -1707,7 +1908,7 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     return '<div class="toolbar"><div class="chips">' + chips + '</div><button type="button" class="btn-ghost" data-act="logs-save">' + ic('i-down') + '로그 저장</button></div>' +
       '<section class="sheet logbook" id="logbook">' + logBookHtml() + '</section>';
   }
-  const LOG_GROUP_TYPES = { duty: ['duty'], report: ['report'], ledger: ['ledger'], people: ['join', 'rank', 'warn', 'kick'] };
+  const LOG_GROUP_TYPES = { duty: ['duty'], report: ['report'], ledger: ['ledger'], people: ['join', 'rank', 'warn', 'kick', 'roster'] };
   function prependLogs(list) {
     const types = LOG_GROUP_TYPES[S.logGroup];
     const add = list.filter((a) => !types || types.includes(a.type)).map((a) => Object.assign({}, a, { fresh: true }));
@@ -1792,11 +1993,12 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
       if (!LIVE.ready || d.lastId < LIVE.lastId) { LIVE.lastId = d.lastId; LIVE.ready = true; return; }
       if (!d.logs.length) return;
       LIVE.lastId = d.logs[d.logs.length - 1].id;
-      const others = d.logs.filter((a) => a.by !== S.me.id);
+      const others = d.logs.filter((a) => a.by !== S.me.id && a.ev !== 'roster');
       others.slice(-4).forEach(showNotif);
       if (others.length) chime(others[others.length - 1].ev);
       if (S.route === 'logs') prependLogs(d.logs);
       else if (['home', 'duty', 'reports', 'treasury'].includes(S.route) && canRefresh()) refresh();
+      else if (S.route === 'roster' && !S.rosterEdit && canRefresh() && d.logs.some((a) => a.by !== S.me.id && (a.ev === 'roster' || a.type === 'duty'))) refresh();
     } catch (_) { /* 다음 차례에 다시 받는다 */ } finally { LIVE.busy = false; }
   }
 
@@ -1807,6 +2009,7 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
       load: () => Promise.all([api('/duty/me'), api('/duty/logs' + (S.dutyTab === 'all' ? '' : '?mine=1'))]).then(([a, b]) => Object.assign(a, { logs: b.logs })),
     },
     reports: { title: '전쟁 보고서', load: () => api('/reports' + (S.repType ? '?type=' + S.repType : '')), render: renderReports },
+    roster: { title: '직급표', load: () => api('/roster'), render: renderRoster },
     calc: { title: '계산기', load: () => Promise.resolve({}), render: renderCalc },
     treasury: { title: '조직 자금', load: () => api('/ledger'), render: renderTreasury },
     logs: { title: '로그', load: () => api('/logs?limit=' + S.logLimit + (S.logGroup ? '&group=' + S.logGroup : '')), render: renderLogs },
@@ -2103,6 +2306,72 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
      양식 제출
      ================================================================ */
   const FORMS = {
+    async 'ro-tier'(f) {
+      const fd = new FormData(f);
+      const btn = f.querySelector('.btn');
+      const name = String(fd.get('name') || '').trim();
+      formErr(f, '');
+      if (!name) { formErr(f, '구분 이름을 입력해 주세요'); return; }
+      busy(btn, true);
+      try {
+        const id = fd.get('id');
+        await rosterOp(id ? { op: 'tier.rename', id: Number(id), name } : { op: 'tier.add', name });
+        closeModal();
+        toast(id ? '구분 이름을 바꿨습니다' : '구분 ' + name + '을(를) 만들었습니다');
+      } catch (e) { formErr(f, e.message); busy(btn, false); }
+    },
+    async 'ro-title'(f) {
+      const fd = new FormData(f);
+      const btn = f.querySelector('.btn');
+      const name = String(fd.get('name') || '').trim(), icon = String(fd.get('icon') || '');
+      formErr(f, '');
+      if (!name && !icon) { formErr(f, '직급 이름을 입력해 주세요'); return; }
+      busy(btn, true);
+      try {
+        const id = fd.get('id');
+        await rosterOp(id ? { op: 'title.edit', id: Number(id), name, icon, tierId: Number(fd.get('tierId')) } : { op: 'title.add', tierId: Number(fd.get('tierId')), name, icon });
+        closeModal();
+        toast(id ? '직급을 고쳤습니다' : '직급을 추가했습니다');
+      } catch (e) { formErr(f, e.message); busy(btn, false); }
+    },
+    async 'ro-person'(f) {
+      const fd = new FormData(f);
+      const btn = f.querySelector('.btn');
+      const name = String(fd.get('name') || '').trim(), gid = String(fd.get('gid') || '').trim();
+      formErr(f, '');
+      if (!name) { formErr(f, '이름을 입력해 주세요'); return; }
+      busy(btn, true);
+      try {
+        const id = fd.get('id'), titleId = Number(fd.get('titleId'));
+        await rosterOp(id ? { op: 'person.edit', id: Number(id), name, gid, titleId } : { op: 'person.add', titleId, name, gid });
+        closeModal();
+        toast((id ? '고쳤습니다: ' : '추가했습니다: ') + pLabel({ name, gid }));
+      } catch (e) { formErr(f, e.message); busy(btn, false); }
+    },
+    async 'ro-import'(f) {
+      const btn = f.querySelector('.btn');
+      const text = f.querySelector('textarea').value;
+      const out = f.querySelector('.ro-preview');
+      formErr(f, '');
+      if (!text.trim()) { formErr(f, '불러올 글을 붙여넣어 주세요'); return; }
+      busy(btn, true, '확인 중');
+      try {
+        if (btn.dataset.step !== 'apply') {
+          const d = await api('/roster', { method: 'POST', body: { op: 'import', text, dry: true } });
+          const pv = d.preview;
+          out.innerHTML = '<b>' + pv.people + '명</b>을 찾았어요. 구분 ' + pv.tiers + '개(' + esc(pv.names.join(', ')) + '), 직급 ' + pv.titles + '개입니다. 지금 직급표가 이걸로 바뀝니다.';
+          out.hidden = false;
+          busy(btn, false);
+          btn.dataset.step = 'apply';
+          btn.textContent = '이걸로 바꾸기';
+          btn.classList.add('danger');
+          return;
+        }
+        await rosterOp({ op: 'import', text });
+        closeModal();
+        toast('디스코드 글로 직급표를 새로 채웠습니다');
+      } catch (e) { formErr(f, e.message); busy(btn, false); }
+    },
     async login(f) {
       const fd = new FormData(f);
       const btn = f.querySelector('.btn');
@@ -2287,6 +2556,49 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
     'duty-tab': (el) => { S.dutyTab = el.dataset.tab; refresh(); },
     'rep-filter': (el) => { S.repType = el.dataset.type; refresh(); },
     'rep-new': () => openReportForm(),
+    'ro-edit': () => { S.rosterEdit = !S.rosterEdit; if (S.roster) paintRoster(S.roster); },
+    'ro-copy': async () => {
+      if (!S.roster) return;
+      const ok = await copyText(S.roster.text);
+      if (!ok) { toast('복사하지 못했습니다. 브라우저 권한을 확인하세요', true); return; }
+      toast(S.roster.text.length > 2000 ? '복사했습니다. 2000자가 넘어서 디스코드에는 나눠서 올려야 해요' : '디스코드에 붙여넣을 직급표를 복사했습니다');
+    },
+    'ro-import': () => openRosterImport(),
+    'ro-tier-add': () => openTierForm(null),
+    'ro-tier-edit': (el) => { const t = roTier(el.dataset.id); if (t) openTierForm(t); },
+    'ro-tier-move': (el) => act(() => rosterOp({ op: 'tier.move', id: Number(el.dataset.id), dir: Number(el.dataset.d) }), el),
+    'ro-tier-del': async (el) => {
+      const t = roTier(el.dataset.id);
+      if (!t) return;
+      const yes = await confirmBox({
+        title: '구분 삭제',
+        text: t.name + ' 구분을 지울까요?' + (t.titles.length ? ' 안에 있는 직급 ' + t.titles.length + '개와 ' + t.count + '명도 같이 지워집니다.' : ''),
+        ok: '삭제', danger: true,
+      });
+      if (yes) act(() => rosterOp({ op: 'tier.remove', id: t.id }, '구분 ' + t.name + '을(를) 지웠습니다'));
+    },
+    'ro-title-add': (el) => { const t = roTier(el.dataset.id); if (t) openTitleForm(t, null); },
+    'ro-title-edit': (el) => { const f = roTitle(el.dataset.id); if (f) openTitleForm(f.tier, f.title); },
+    'ro-title-move': (el) => act(() => rosterOp({ op: 'title.move', id: Number(el.dataset.id), dir: Number(el.dataset.d) }), el),
+    'ro-title-del': async (el) => {
+      const f = roTitle(el.dataset.id);
+      if (!f) return;
+      closeModal();
+      const label = f.title.name || '이름 없는 직급';
+      if (f.title.people.length) {
+        const yes = await confirmBox({ title: '직급 삭제', text: label + ' 직급을 지울까요? ' + f.title.people.length + '명도 직급표에서 같이 빠집니다.', ok: '삭제', danger: true });
+        if (!yes) return;
+      }
+      act(() => rosterOp({ op: 'title.remove', id: f.title.id }, '직급 ' + label + '을(를) 지웠습니다'));
+    },
+    'ro-person': (el) => { const f = roPerson(el.dataset.id); if (f) openPersonForm(f.title, f.person); },
+    'ro-person-add': (el) => { const f = roTitle(el.dataset.id); if (f) openPersonForm(f.title, null); },
+    'ro-person-del': (el) => {
+      const f = roPerson(el.dataset.id);
+      if (!f) return;
+      closeModal();
+      act(() => rosterOp({ op: 'person.remove', id: f.person.id }, pLabel(f.person) + '을(를) 직급표에서 뺐습니다'));
+    },
     'shot-pick': () => { const inp = $('#shotFile'); if (inp) inp.click(); },
     'calc-step': (el) => {
       const id = el.dataset.id;
@@ -2471,6 +2783,21 @@ fieldset.f { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
       el.value = el.value.replace(/[^\d]/g, '').slice(0, 3);
       S.calc[el.dataset.calc] = Math.min(999, digits(el.value));
       updateCalc();
+      return;
+    }
+    if (el.classList && el.classList.contains('gid-input')) {
+      el.value = el.value.replace(/[^\d]/g, '').slice(0, 10);
+      return;
+    }
+    if (el.classList && el.classList.contains('ro-import-text')) {
+      const f = el.form, btn = f && f.querySelector('.btn');
+      if (btn && btn.dataset.step === 'apply') {
+        btn.dataset.step = 'check';
+        btn.textContent = '확인';
+        btn.classList.remove('danger');
+        const out = f.querySelector('.ro-preview');
+        if (out) out.hidden = true;
+      }
       return;
     }
     if (el.classList && el.classList.contains('land-input')) {

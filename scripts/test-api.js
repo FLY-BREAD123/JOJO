@@ -369,6 +369,88 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   r = await j('/auth/register', { m: 'POST', b: { username: 'taeo', name: '류태오', password: 'again' } });
   chk('퇴장된 아이디 재가입 신청 가능', r.s === 200 && r.d.pending === true, r);
 
+  // ---- 직급표 ----
+  const FENCE = '`'.repeat(3);
+  const I2 = '⁨⁨', I3 = '⁨⁨⁨';
+  // 디스코드에서 그대로 복사한 글 (코드 칸, 보이지 않는 글자, 빈 칸 포함)
+  const DISCORD = [
+    '👑 ── 최고위직 ── 👑 [3]', I2, '', FENCE, '👑 두목: 삥땅(655) ', '👑 부두목 : 유지환(186) , 개미(232)', I3, FENCE, '', '',
+    FENCE, '👑 ── 고위직 ── 👑 [3]', FENCE, '', I2, '', FENCE, '👑어퍼문원: 삐땅(985)', '', '⚜️고문: 탁강만(723)', '', '👑여심 저격: 수빈리아버거(4892)', I3, FENCE, '', '',
+    FENCE, '👑 ── 일반직 ── 👑 [20]', FENCE, '', I2, '', FENCE, ' ',
+    '👑 트리오 : 예성(13586) , 코코(12488) , 혜준(11089)', '', '👑 맹구 : 이아연(808)', '',
+    '👑 아기천사 : 낚시왕(8733) , 닭고기투(11251) , 둥이(10095) , 에몽(8709), 옹삼이투(1773), 메시(8528)', '',
+    '👑 외쳐 : 예엄줴줴이야(4508)', '', '👑 큰형님 :  파이브엠정우(270)', '', '👑 세아창규 : 신세아(162) , 신창규(161)', '',
+    '👑 천연다연 : 다연(2419) , 천연 (1001)', '', '👑 여심저격 : 천빙(11872)', '', '👑 유지환  : 파인애플쿵야(909)', '',
+    '👑 진진 : 진진(193)', '', '👑 :  짱아(10425) , 소연(6414) , 대차(1000) ', I3, FENCE, '', '',
+    FENCE, '👑 ── 수습직 ── 👑 [7]', FENCE, '', I2, '', FENCE, '👑 수습직: 채유은(14504) , 굿땡(134) , 김강철(954) ,  , 반꾸(1471) ,  , 우와(13783) ', I3, FENCE, '', '',
+    FENCE, '👑 ── 특수직 ── 👑 [0]', FENCE, '', I2, '', FENCE, I3, FENCE,
+  ].join('\n');
+  r = await j('/roster', { t: tB2 });
+  let RO = r.d.roster;
+  chk('직급표: 처음엔 적야 직급표로 채워짐', r.s === 200 && RO.tiers.map((t) => t.name + t.count).join(',') === '최고위직3,고위직3,일반직22,수습직5,특수직0' && RO.total === 33 && RO.titleCount === 17, RO.tiers && RO.tiers.map((t) => t.name + t.count));
+  chk('직급표: 간부는 보기만', RO.canEdit === false);
+  chk('직급표: 이름 없는 직급, 아이콘, 고유번호', RO.tiers[2].titles[10].name === '' && RO.tiers[2].titles[10].people.map((p) => p.name).join() === '짱아,소연,대차' && RO.tiers[1].titles[1].icon === '⚜️' && RO.tiers[0].titles[0].people[0].gid === '655', RO.tiers[2].titles[10]);
+  chk('직급표: 디스코드 글 (인원 자동)', RO.text.includes('👑 ── 일반직 ── 👑 [22]') && RO.text.includes('⚜️ 고문 : 탁강만(723)') && RO.text.includes('👑 : 짱아(10425) , 소연(6414) , 대차(1000)') && RO.text.startsWith(FENCE), RO.text.slice(0, 120));
+  r = await j('/roster', { m: 'POST', b: { op: 'tier.add', name: '특공대' }, t: tB2 });
+  chk('직급표: 간부 편집 403', r.s === 403, r);
+  r = await j('/roster', { m: 'POST', b: { op: 'import', text: DISCORD, dry: true }, t: tA2 });
+  chk('디스코드 원문 미리보기 (빈 칸 무시)', r.s === 200 && r.d.preview.tiers === 5 && r.d.preview.titles === 17 && r.d.preview.people === 33 && r.d.preview.names.join() === '최고위직,고위직,일반직,수습직,특수직', r.d);
+  r = await j('/roster', { t: tA2 });
+  chk('미리보기는 바꾸지 않음', r.d.roster.updatedAt === null && r.d.roster.canEdit === true, r.d.roster.updatedAt);
+  r = await j('/roster', { m: 'POST', b: { op: 'tier.add', name: '특공대' }, t: tA2 });
+  chk('구분 추가', r.s === 200 && r.d.roster.tiers.length === 6 && r.d.roster.tiers[5].name === '특공대' && r.d.roster.byName === '강도윤', r);
+  const spId = r.d.roster.tiers[5].id;
+  r = await j('/roster', { m: 'POST', b: { op: 'tier.rename', id: spId, name: '특공' }, t: tA2 });
+  chk('구분 이름 바꾸기', r.d.roster.tiers[5].name === '특공', r.d.roster.tiers[5]);
+  r = await j('/roster', { m: 'POST', b: { op: 'tier.move', id: spId, dir: -1 }, t: tA2 });
+  chk('구분 위로', r.d.roster.tiers.map((t) => t.name).join() === '최고위직,고위직,일반직,수습직,특공,특수직', r.d.roster.tiers.map((t) => t.name));
+  r = await j('/roster', { m: 'POST', b: { op: 'title.add', tierId: spId, name: '행동대장', icon: ' 🔱 ' }, t: tA2 });
+  chk('직급 추가 (아이콘 공백 제거)', r.s === 200 && r.d.roster.tiers[4].titles[0].name === '행동대장' && r.d.roster.tiers[4].titles[0].icon === '🔱', r.d.roster.tiers[4]);
+  const hdId = r.d.roster.tiers[4].titles[0].id;
+  r = await j('/roster', { m: 'POST', b: { op: 'title.add', tierId: spId, name: '', icon: '' }, t: tA2 });
+  chk('이름·아이콘 둘 다 없으면 400', r.s === 400, r);
+  r = await j('/roster', { m: 'POST', b: { op: 'person.add', titleId: hdId, name: '서하진', gid: '4321' }, t: tA2 });
+  chk('사람 추가 + 인트라넷 계정 연결', r.s === 200 && r.d.roster.tiers[4].titles[0].people[0].uid === hajinId && r.d.roster.tiers[4].titles[0].people[0].onDuty === false && r.d.roster.total === 34, r.d.roster.tiers[4].titles[0]);
+  const pId = r.d.roster.tiers[4].titles[0].people[0].id;
+  await j('/duty/start', { m: 'POST', t: tB2 });
+  r = await j('/roster', { t: tB2 });
+  chk('근무 중 표시', r.d.roster.tiers[4].titles[0].people[0].onDuty === true);
+  await j('/duty/stop', { m: 'POST', t: tB2 });
+  for (const [b, name] of [[{ name: '', gid: '1' }, '이름 없음'], [{ name: '가', gid: '12a' }, '고유번호 숫자 아님'], [{ name: '가'.repeat(21) }, '이름 21자']]) {
+    r = await j('/roster', { m: 'POST', b: { op: 'person.add', titleId: hdId, ...b }, t: tA2 });
+    chk('사람 추가 거절: ' + name, r.s === 400, r);
+  }
+  r = await j('/roster', { m: 'POST', b: { op: 'person.add', titleId: 99999, name: '가' }, t: tA2 });
+  chk('없는 직급 404', r.s === 404, r);
+  r = await j('/roster', { m: 'POST', b: { op: 'nope' }, t: tA2 });
+  chk('모르는 요청 400', r.s === 400, r);
+  const doomokId = RO.tiers[0].titles[0].id;
+  r = await j('/roster', { m: 'POST', b: { op: 'person.edit', id: pId, name: '서하진', gid: '4322', titleId: doomokId }, t: tA2 });
+  chk('사람 수정 + 다른 직급으로 옮기기', r.s === 200 && r.d.roster.tiers[0].titles[0].people.map((p) => p.name + p.gid).join() === '삥땅655,서하진4322' && r.d.roster.tiers[4].titles[0].people.length === 0 && r.d.roster.tiers[0].count === 4, r.d.roster.tiers[0].titles[0]);
+  r = await j('/roster', { m: 'POST', b: { op: 'title.edit', id: hdId, name: '행동대', icon: '⭐', tierId: RO.tiers[1].id }, t: tA2 });
+  chk('직급 수정 + 다른 구분으로 옮기기', r.s === 200 && r.d.roster.tiers[1].titles.map((x) => x.icon + x.name).join() === '👑어퍼문원,⚜️고문,👑여심 저격,⭐행동대' && r.d.roster.tiers[4].titles.length === 0, r.d.roster.tiers[1].titles.map((x) => x.name));
+  r = await j('/roster', { m: 'POST', b: { op: 'title.move', id: hdId, dir: -1 }, t: tA2 });
+  chk('직급 위로', r.d.roster.tiers[1].titles.map((x) => x.name).join() === '어퍼문원,고문,행동대,여심 저격', r.d.roster.tiers[1].titles.map((x) => x.name));
+  r = await j('/roster', { m: 'POST', b: { op: 'title.move', id: RO.tiers[1].titles[0].id, dir: -1 }, t: tA2 });
+  chk('맨 위에서 위로는 그대로', r.s === 200 && r.d.roster.tiers[1].titles[0].name === '어퍼문원');
+  r = await j('/roster', { m: 'POST', b: { op: 'person.remove', id: pId }, t: tA2 });
+  chk('사람 빼기', r.s === 200 && r.d.roster.tiers[0].count === 3, r.d.roster.tiers[0]);
+  r = await j('/roster', { m: 'POST', b: { op: 'title.remove', id: hdId }, t: tA2 });
+  chk('직급 삭제', r.d.roster.tiers[1].titles.length === 3);
+  r = await j('/roster', { m: 'POST', b: { op: 'tier.remove', id: spId }, t: tA2 });
+  chk('구분 삭제', r.d.roster.tiers.length === 5 && r.d.roster.total === 33, r.d.roster.tiers.map((t) => t.name));
+  const { parseRoster } = require('../lib/core');
+  const back = parseRoster(r.d.roster.text);
+  chk('내보낸 글을 다시 읽으면 같음', JSON.stringify(back.tiers.map((t) => [t.name, t.titles.map((x) => [x.icon, x.name, x.people.map((p) => p.name + '/' + p.gid)])])) === JSON.stringify(r.d.roster.tiers.map((t) => [t.name, t.titles.map((x) => [x.icon, x.name, x.people.map((p) => p.name + '/' + p.gid)])])));
+  r = await j('/roster', { m: 'POST', b: { op: 'import', text: '아무 글' }, t: tA2 });
+  chk('직급 없는 글 불러오기 400', r.s === 400 && r.d.error.includes('두목'), r);
+  r = await j('/roster', { m: 'POST', b: { op: 'import', text: '두목 : 가(1)\n부두목 : 나(2) , 다' }, t: tA2 });
+  chk('구분 없는 글은 기타로', r.s === 200 && r.d.roster.tiers.length === 1 && r.d.roster.tiers[0].name === '기타' && r.d.roster.total === 3 && r.d.roster.tiers[0].titles[1].people[1].gid === '', r.d.roster.tiers);
+  r = await j('/roster', { m: 'POST', b: { op: 'import', text: DISCORD }, t: tA2 });
+  chk('디스코드 원문으로 다시 불러오기', r.s === 200 && r.d.roster.total === 33 && r.d.roster.tiers[1].titles.map((x) => x.icon + x.name).join() === '👑어퍼문원,⚜️고문,👑여심 저격' && r.d.roster.tiers[2].titles[6].people[1].name === '천연', r.d.roster.tiers[1]);
+  r = await j('/logs?group=people', { t: tA2 });
+  chk('직급표 로그 (인사 분류)', r.d.logs.some((a) => a.type === 'roster' && a.text === '직급표: 행동대장에 서하진(4321) 추가 - 강도윤') && r.d.logs.some((a) => a.text.startsWith('직급표: 디스코드 글로 새로 불러옴 (구분 5개, 직급 17개, 33명)')), r.d.logs.filter((a) => a.type === 'roster').map((a) => a.text).slice(0, 6));
+
   // ---- 기타 ----
   r = await j('/nope', { t: tA2 });
   chk('없는 경로 404', r.s === 404, r);
@@ -391,6 +473,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   chk('재시작 후 세션 유지', r.s === 200 && r.d.me.name === '강도윤', r);
   r = await j('/ledger', { t: tA2 });
   chk('재시작 후 잔액 유지', r.s === 200 && r.d.balance === 3000, r);
+  r = await j('/roster', { t: tA2 });
+  chk('재시작 후 직급표 유지', r.s === 200 && r.d.roster.total === 33 && r.d.roster.byName === '강도윤', r.d && r.d.roster && r.d.roster.total);
   await stop();
 
   fs.rmSync(DATA_DIR, { recursive: true, force: true });

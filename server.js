@@ -9,8 +9,15 @@ const path = require('path');
 const { createCore, freshData } = require('./lib/core');
 const { openStore } = require('./lib/store');
 
+const fs = require('fs');
 const PORT = Number(process.env.PORT) || 3000;
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+// 데이터 폴더: DATA_DIR > Render 디스크(/var/data 에 붙어 있으면 자동) > 앱 안 data 폴더
+const LOCAL_DIR = path.join(__dirname, 'data');
+const RENDER_DISK = '/var/data';
+function writableDir(dir) {
+  try { return fs.statSync(dir).isDirectory() && (fs.accessSync(dir, fs.constants.W_OK), true); } catch (_) { return false; }
+}
+const DATA_DIR = process.env.DATA_DIR || (process.env.RENDER && writableDir(RENDER_DISK) ? RENDER_DISK : LOCAL_DIR);
 const DATABASE_URL = (process.env.DATABASE_URL || '').trim();
 const WEBHOOK = (process.env.DISCORD_WEBHOOK_URL || '').trim();
 const BOOT_TRIES = Math.max(1, Number(process.env.DB_BOOT_TRIES) || 8);
@@ -19,6 +26,8 @@ const BOOT_TRIES = Math.max(1, Number(process.env.DB_BOOT_TRIES) || 8);
    바뀔 때마다 잠깐 모았다가 한 번에 쓴다. 쓰는 중에 또 바뀌면 끝난 뒤 다시 쓰고,
    실패하면 점점 간격을 늘려 다시 시도한다. 종료 신호를 받으면 마지막으로 한 번 더 쓴다. */
 const store = openStore({ databaseUrl: DATABASE_URL, dataDir: DATA_DIR });
+// 바깥에 알려 주는 저장 방식: postgres / disk(앱 밖 폴더, 재배포해도 남음) / local(앱 안 폴더)
+const STORE_MODE = store.kind === 'postgres' ? 'postgres' : path.resolve(DATA_DIR) === LOCAL_DIR ? 'local' : 'disk';
 const SAVE_DELAY = store.kind === 'file' ? 120 : 1000;
 let core = null;
 let saveTimer = null;
@@ -122,7 +131,7 @@ app.use(express.json({ limit: '8mb' }));
 
 app.get('/healthz', (req, res) => {
   res.set('cache-control', 'no-store');
-  res.json({ ok: true, store: store.kind, saving: failCount ? 'retrying' : 'ok', lastSavedAt: lastSavedAt || null });
+  res.json({ ok: true, store: STORE_MODE, saving: failCount ? 'retrying' : 'ok', lastSavedAt: lastSavedAt || null });
 });
 
 app.use('/api', async (req, res) => {
@@ -149,8 +158,8 @@ let stopping = false;
 
 async function boot() {
   console.log('[data] 저장소: ' + (store.kind === 'postgres' ? 'Postgres (' + store.label + ')' : '파일 ' + store.label));
-  if (store.kind === 'file' && process.env.RENDER) {
-    console.warn('[data] 주의: Render에서 DATABASE_URL 없이 실행 중입니다. 서버가 잠들거나 다시 배포되면 데이터가 지워집니다.');
+  if (STORE_MODE === 'local' && process.env.RENDER) {
+    console.warn('[data] 주의: Render에서 디스크 없이 실행 중입니다. 다시 배포하거나 재시작하면 데이터가 지워집니다. Disk 메뉴에서 Mount Path /var/data 로 디스크를 붙이세요.');
   }
   let data = null;
   for (let i = 1; ; i++) {

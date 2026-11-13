@@ -2,15 +2,19 @@ services:
   - type: web
     name: jeokya-intranet
     runtime: node
-    plan: free
+    plan: starter
     region: singapore
     buildCommand: npm install --omit=dev
     startCommand: npm start
     healthCheckPath: /healthz
     autoDeploy: true
+    # 데이터는 이 디스크(/var/data)에 저장된다. 다시 배포하거나 재시작해도 남는다.
+    disk:
+      name: jeokya-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_VERSION
         value: "22"
-      # Neon 같은 무료 Postgres 접속 주소. 없으면 서버가 잠들 때 데이터가 지워진다.
-      - key: DATABASE_URL
-        sync: false
+      - key: DATA_DIR
+        value: /var/data

@@ -43,26 +43,29 @@ npm start
 
 ## Render 배포
 
-Render 무료 플랜은 15분 동안 접속이 없으면 서버가 잠들고, 그때 서버 안의 파일이 지워집니다.
-그래서 데이터는 무료 Postgres(Neon)에 저장합니다.
+데이터는 Render **Persistent Disk**에 저장합니다. 디스크는 유료 플랜(Starter 월 $7 이상)에서만 붙일 수 있고, 1GB에 월 $0.25입니다.
+Render가 디스크를 매일 자동으로 스냅샷해 둡니다(7일 보관).
 
-1. **Neon**(neon.com)에서 프로젝트를 만들고 접속 주소(`postgresql://...`)를 복사합니다. 지역은 Singapore 추천
-2. 이 폴더를 GitHub 저장소에 올립니다
-3. Render → **New → Blueprint** → 저장소 선택 (`render.yaml`을 읽어서 설정이 자동으로 들어갑니다)
-4. `DATABASE_URL` 칸에 1번에서 복사한 주소를 붙여넣고 배포
-5. 배포가 끝나면 바로 들어가서 **가장 먼저 가입**하세요. 첫 가입자가 개발자가 됩니다
+**이미 만든 웹 서비스에 디스크 붙이기**
+1. 서비스 → 왼쪽 **Disk** → **Add Disk**
+2. Name `jeokya-data`, Mount Path **`/var/data`**, Size `1` GB → Save
+3. Render가 다시 배포합니다. 서버는 `/var/data`에 디스크가 붙어 있으면 알아서 거기에 저장합니다(`DATA_DIR` 설정 불필요)
+4. 디스크를 붙이기 전에 만든 계정·기록은 사라집니다. 배포가 끝나면 바로 **가장 먼저 가입**하세요. 첫 가입자가 개발자가 됩니다
+
+**새로 만들 때**: Render → **New → Blueprint** → 저장소 선택. `render.yaml`에 플랜, 지역(싱가포르), 디스크가 다 들어 있습니다.
+
+`https://주소/healthz`에서 `"store":"disk"`가 보이면 디스크에 저장되고 있는 것입니다(`local`이면 디스크가 안 붙은 상태).
 
 환경변수
 
 | 이름 | 내용 |
 | --- | --- |
-| `DATABASE_URL` | Postgres 접속 주소. 있으면 DB에 저장, 없으면 `data/data.json` 파일에 저장 |
+| `DATA_DIR` | (선택) 데이터 폴더. 비우면 Render에서는 `/var/data` 디스크, 그 외에는 앱 안 `data` 폴더 |
 | `DISCORD_WEBHOOK_URL` | (선택) 디스코드 채널 웹훅 주소. 넣으면 알림이 갑니다 |
-| `DATA_DIR` | (선택) 파일로 저장할 때 폴더. 유료 플랜 Persistent Disk를 쓰면 그 경로 |
+| `DATABASE_URL` | (선택) 디스크 대신 Postgres(예: Neon 무료)에 저장하고 싶을 때. 있으면 이쪽이 우선 |
 
-- DB에는 데이터 전체가 압축돼 한 줄로 저장되고(`jeokya_store`), 서버가 켜질 때마다 한 벌씩 `jeokya_backup`에 남습니다(최근 14개).
-- DB에 닿지 않으면 서버는 빈 데이터로 시작하지 않고 몇 번 다시 시도한 뒤 꺼집니다. 기존 데이터를 덮어쓰지 않기 위해서입니다.
-- 무료 플랜은 잠들어 있다가 첫 접속 때 깨어나느라 1분 정도 걸릴 수 있습니다.
+- 무료 플랜으로 돌리려면 디스크를 붙일 수 없으니 `DATABASE_URL`(Neon 등)을 넣으세요. 없으면 서버가 잠들 때마다 데이터가 지워집니다.
+- Postgres를 쓰면 데이터 전체가 압축돼 한 줄로 저장되고(`jeokya_store`), 서버가 켜질 때마다 `jeokya_backup`에 한 벌씩 남습니다(최근 14개). DB에 닿지 않으면 빈 데이터로 시작하지 않고 몇 번 다시 시도한 뒤 꺼집니다.
 - `/healthz`에서 저장소 종류(`store`)와 저장 상태(`saving`)를 볼 수 있습니다.
 
 ## 구조

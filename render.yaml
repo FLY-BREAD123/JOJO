@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: jeokya-intranet
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Neon 같은 무료 Postgres 접속 주소. 없으면 서버가 잠들 때 데이터가 지워진다.
+      - key: DATABASE_URL
+        sync: false

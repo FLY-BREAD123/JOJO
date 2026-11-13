@@ -1,0 +1,19 @@
+{
+  "name": "jeokya-intranet",
+  "version": "2.1.0",
+  "private": true,
+  "description": "적야 조직 인트라넷",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node scripts/test-api.js",
+    "build:demo": "node scripts/build-demo.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.23.1"
+  }
+}

@@ -21,6 +21,7 @@ const DATA_DIR = process.env.DATA_DIR || (process.env.RENDER && writableDir(REND
 const DATABASE_URL = (process.env.DATABASE_URL || '').trim();
 const WEBHOOK = (process.env.DISCORD_WEBHOOK_URL || '').trim();
 const BOOT_TRIES = Math.max(1, Number(process.env.DB_BOOT_TRIES) || 8);
+const VERSION = require('./package.json').version;
 
 /* ---------------- 저장 ----------------
    바뀔 때마다 잠깐 모았다가 한 번에 쓴다. 쓰는 중에 또 바뀌면 끝난 뒤 다시 쓰고,
@@ -131,7 +132,7 @@ app.use(express.json({ limit: '8mb' }));
 
 app.get('/healthz', (req, res) => {
   res.set('cache-control', 'no-store');
-  res.json({ ok: true, store: STORE_MODE, saving: failCount ? 'retrying' : 'ok', lastSavedAt: lastSavedAt || null });
+  res.json({ ok: true, version: VERSION, store: STORE_MODE, saving: failCount ? 'retrying' : 'ok', lastSavedAt: lastSavedAt || null });
 });
 
 app.use('/api', async (req, res) => {

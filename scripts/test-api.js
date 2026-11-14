@@ -72,6 +72,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     chk('이전 전쟁 기록은 지상전쟁으로', old.reports[1].mode === 'ground' && old.reports[1].title === '지상전쟁 vs 작두' && old.reports[1].land === 3000 && old.version === 3, old.reports[1]);
     chk('이전 데이터: 첫 가입자가 개발자로', old.members[0].level === 0 && old.members[1].level === 1);
     chk('이전 데이터: 설정 화폐 유지, 가격표 추가', old.settings.currency === '$' && old.settings.guns.length === 6);
+    const oldPrice = { settings: { guns: [{ id: 'rimpid', name: '림피드', group: '특총', price: 200000000 }, { id: 'amgusa', name: '암구사', group: '특총', price: 200000000 }] } };
+    migrate(oldPrice);
+    chk('저장돼 있던 옛 가격(2억)도 3억으로', oldPrice.settings.guns.find((g) => g.id === 'rimpid').price === 300000000 && oldPrice.settings.guns.find((g) => g.id === 'amgusa').price === 300000000 && oldPrice.settings.guns.length === 6, oldPrice.settings.guns);
     chk('이전 데이터: 로그 번호 이어감', old.seq.act === 7 && Array.isArray(old.warnings));
     migrate(old);
     chk('두 번 돌려도 개발자 한 명', old.members.filter((m) => m.level === 0).length === 1);
@@ -80,7 +83,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // ---- 가입 / 로그인 ----
   let r = await j('/auth/register', { m: 'POST', b: { username: 'Boss_1', name: '강도윤', password: 'crown' } });
   chk('첫 가입자 = 개발자, 바로 토큰', r.s === 200 && r.d.token && r.d.me.level === 0 && r.d.me.rank === '개발자' && r.d.me.perms.dev === true && r.d.me.perms.admin === true, r);
-  chk('기본 화폐 원, 총기 가격표', r.d.settings.currency === '원' && r.d.settings.guns.length === 6 && r.d.settings.guns.find((g) => g.id === 'carbine').price === 40000000, r.d.settings);
+  chk('기본 화폐 원, 총기 가격표 (특총 3억)', r.d.settings.currency === '원' && r.d.settings.guns.length === 6 && r.d.settings.guns.find((g) => g.id === 'carbine').price === 40000000 && r.d.settings.guns.find((g) => g.id === 'rimpid').price === 300000000 && r.d.settings.guns.find((g) => g.id === 'amgusa').price === 300000000, r.d.settings);
   const tA = r.d.token;
   const bossId = r.d.me.id;
   chk('아이디 소문자 정규화', r.d.me.username === 'boss_1');
